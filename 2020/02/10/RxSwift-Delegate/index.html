@@ -99,8 +99,7 @@
         </span></div>
     </header>
 
-    <div class="post-content"><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[rectangle setX: <span class="number">10</span> y: <span class="number">10</span> width: <span class="number">20</span> height: <span class="number">20</span>];</span><br></pre></td></tr></table></figure>
-<p>最近在学习 RxSwift, 一个很常用的例子就是通过 UITableView 各种数据的展示和事件的点击来学习。通常我们会通过原生的 delegate 来控制各种行为，比如通过 <code>tableView(_:didSelectRowAt:)</code> 这个方法来设置点击 cell 之后的自动反选，但既然是在学习 Reactive programming, 我们期待实现下面的效果：</p>
+    <div class="post-content"><p>最近在学习 RxSwift, 一个很常用的例子就是通过 UITableView 各种数据的展示和事件的点击来学习。通常我们会通过原生的 delegate 来控制各种行为，比如通过 <code>tableView(_:didSelectRowAt:)</code> 这个方法来设置点击 cell 之后的自动反选，但既然是在学习 Reactive programming, 我们期待实现下面的效果：</p>
 <figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">myTableView.rx.didSelectedRowAtIndexPath.subscribe(onNext: &#123;</span><br><span class="line">  &#x2F;&#x2F; do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这看上去更简洁，更符合 RxSwift 的习惯，RxSwift 也提供了这种机制：<code>DelegateProxy</code>, 让我们可以实现上面的代码。</p>
