@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="最近在学习 RxSwift, 一个很常用的例子就是通过 UITableView 各种数据的展示和事件的点击来学习。通常我们会通过原生的 delegate 来控制各种行为，比如通过 `tableView(_:didSelectRowAt:)` 这个方法来设置点击 cell 之后的自动反选，但既然是在学习 Reactive programming, 我们期待实现下面的效果："/><meta name="keywords" content="iOS, RxSwift, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://silksong.me/2020/02/10/RxSwift-Delegate/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>RxSwift 自定义 Delegate 实现 - SilkSong's Blog</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">SilkSong's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">SilkSong's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">RxSwift 自定义 Delegate 实现
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-02-10
+        </span></div>
+    </header>
+
+    <div class="post-content"><figure class="highlight objc"><table><tr><td class="code"><pre><span class="line">[rectangle setX: <span class="number">10</span> y: <span class="number">10</span> width: <span class="number">20</span> height: <span class="number">20</span>];</span><br></pre></td></tr></table></figure>
+<p>最近在学习 RxSwift, 一个很常用的例子就是通过 UITableView 各种数据的展示和事件的点击来学习。通常我们会通过原生的 delegate 来控制各种行为，比如通过 <code>tableView(_:didSelectRowAt:)</code> 这个方法来设置点击 cell 之后的自动反选，但既然是在学习 Reactive programming, 我们期待实现下面的效果：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">myTableView.rx.didSelectedRowAtIndexPath.subscribe(onNext: &#123;</span><br><span class="line">  &#x2F;&#x2F; do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这看上去更简洁，更符合 RxSwift 的习惯，RxSwift 也提供了这种机制：<code>DelegateProxy</code>, 让我们可以实现上面的代码。</p>
+<p>事实上，RxSwift 为我们提供了一个 <code>itemSelected</code> 变量可以作为我们学习的对象</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tableView.rx.itemSelected.subscribe(onNext: &#123; path in </span><br><span class="line">&#x2F;&#x2F;do something</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过查看 <code>itemSelected</code> 在 UITableView+Rx.swift 的源码我们可以看到，它其实就是 delegate message <code>tableView:didSelectRowAtIndexPath:</code> 的 Reactive wrapper,<br>其中 source 是通过<code>delegate.methodInvoked</code> 返回的 Observable<IndexPath></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">public var itemSelected: ControlEvent&lt;IndexPath&gt; &#123;</span><br><span class="line">        let source &#x3D;  self.delegate.methodInvoked(#selector(UITableViewDelegate.tableView(_:didSelectRowAt:)))</span><br><span class="line">            .map &#123; a in</span><br><span class="line">                return try castOrThrow(IndexPath.self, a[1])</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        return ControlEvent(events: source)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>那这就解释的通，对 itemSelected 订阅来获取通知的方法。我们继续查看 delegate 定义</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&#x2F;&#x2F;&#x2F; Reactive wrapper for &#96;delegate&#96;.</span><br><span class="line">&#x2F;&#x2F;&#x2F; For more information take a look at &#96;DelegateProxyType&#96; protocol documentation.</span><br><span class="line"> public var delegate: DelegateProxy&lt;UIScrollView, UIScrollViewDelegate&gt; &#123;</span><br><span class="line">           return RxScrollViewDelegateProxy.proxy(for: base)</span><br><span class="line">       &#125;</span><br></pre></td></tr></table></figure>
+<p>可以看到 delegate 是原生 delegate 的 Reactive wrapper, 是一个继承了 <code>DelegateProxy</code> 的 computed property, 并且通过查资料得知，只能通过 <code>proxyForObject</code> 方法来创建它，然后我们继续了解 <code>DelegateProxy</code> 这个协议, 具体源码略长，这里就不附上，但我们了解到，它是 DelegateProxyType 的基本实现，并且了解到想要实现这个协议所必须实现的三个方法，我们试着自己定义自己的 RxDelegate: </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">class MyRxTableViewDelegateProxy: DelegateProxy&lt;UITableView, UITableViewDelegate&gt;, UITableViewDelegate, DelegateProxyType &#123;</span><br><span class="line">    static func registerKnownImplementations() &#123;</span><br><span class="line">        self.register &#123;</span><br><span class="line">            MyRxTableViewDelegateProxy(parentObject: $0, delegateProxy: MyRxTableViewDelegateProxy.self) &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    static func currentDelegate(for object: UITableView) -&gt; UITableViewDelegate? &#123;</span><br><span class="line">        return object.delegate</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    static func setCurrentDelegate(_ delegate: UITableViewDelegate?, to object: UITableView) &#123;</span><br><span class="line">        object.delegate &#x3D; delegate</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>需要注意的几点是：</p>
+<ol>
+<li><p>自定义协议遵从 <code>DelegateProxy</code>, <code>DelegateProxyType</code>,和我们想要模仿的 <code>UITableViewDelegate</code> 三个协议</p>
+</li>
+<li><p>让 delegate proxy 获取原生delegate对象:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static func currentDelegate(for object: UITableView) -&gt; UITableViewDelegate? &#123;</span><br><span class="line">    return object.delegate</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>设置 delegate proxy 对象</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">static func setCurrentDelegate(_ delegate: UITableViewDelegate?, to object: UITableView) &#123;</span><br><span class="line">    object.delegate &#x3D; delegate</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>用于向RxCocoa注册我们自定义的DelegateProxyType</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">    self.register &#123;</span><br><span class="line">        MyRxTableViewDelegateProxy(parentObject: $0, delegateProxy: MyRxTableViewDelegateProxy.self) &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>然后我们需要定义 <code>rxDidSelectedRowAtIndexPath</code> 和它的对象 <code>rxDelegate</code>,<br>依据源码我们可以很容易试着对 UITableView 扩展</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">extension UITableView &#123;</span><br><span class="line">    var rxDelegate: MyRxTableViewDelegateProxy &#123;</span><br><span class="line">        return MyRxTableViewDelegateProxy.proxy(for: self)</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">        var rxDidSelectRowAtIndexPath: Observable&lt;(UITableView, IndexPath)&gt; &#123;</span><br><span class="line">      return rxDelegate.methodInvoked(#selector(UITableViewDelegate.tableView(_:didSelectRowAt:))) .map&#123; params in</span><br><span class="line">   </span><br><span class="line">        return (params[0] as! UITableView, params[1] as! IndexPath)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>而对于 Selector 方法，一个更好的写法是：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">private extension Selector &#123;</span><br><span class="line">    static let didSelectRowAt &#x3D;</span><br><span class="line">        #selector(UITableViewDelegate.tableView(_:didSelectRowAt:))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>所以我们的 <code>rxDidSelectRowAtIndexPath</code> 就变成了：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">var rxDidSelectRowAtIndexPath: Observable&lt;(UITableView, IndexPath)&gt; &#123;</span><br><span class="line">    return rxDelegate.methodInvoked(.didSelectRowAt).map &#123; params in</span><br><span class="line">        return (params[0] as! UITableView, params[1] as! IndexPath)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>至此，我们自定义的 DelegateProxy 就可以进行原生 delegate 的功能了：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">self.myTableView.rxDidSelectRowAtIndexPath.subscribe(onNext: &#123;</span><br><span class="line">            $0.deselectRow(at: $1, animated: true)</span><br><span class="line">       &#125;).disposed(by: bag)</span><br></pre></td></tr></table></figure>
+
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://silksong.me">SONG Zixin</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://silksong.me/2020/02/10/RxSwift-Delegate/">http://silksong.me/2020/02/10/RxSwift-Delegate/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/iOS/">iOS</a>
+            <a href="/tags/RxSwift/">RxSwift</a>
+            </div>
+        
+        <nav class="post-nav"><a class="next" href="/2019/06/14/install-win10-in-Mac/">
+        <span class="next-text nav-default">install win10 in Mac 采坑记录</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:szxsilk@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/SilkSong" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://twitter.com/silk_Song001" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://stackoverflow.com/users/4259766/silk-song" target="_blank" rel="noopener" class="iconfont icon-stack-overflow" title="stack-overflow"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">SONG Zixin</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://silksong.me/2020/02/10/RxSwift-Delegate/';
+        this.page.identifier = '2020/02/10/RxSwift-Delegate/';
+        this.page.title = 'RxSwift 自定义 Delegate 实现';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//silksong.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

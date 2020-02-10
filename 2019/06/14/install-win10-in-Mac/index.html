@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="之前由于一些原因，想在 Mac 中安装一个 win10 的双系统，本来是一个相对不麻烦的事情，但是我却在第一步卡了很久。"/><meta name="keywords" content="Mac, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://silksong.me/2019/06/14/install-win10-in-Mac/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>install win10 in Mac 采坑记录 - SilkSong's Blog</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">SilkSong's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">SilkSong's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">install win10 in Mac 采坑记录
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-14
+        </span></div>
+    </header>
+
+    <div class="post-content"><p>之前由于一些原因，想在 Mac 中安装一个 win10 的双系统，本来是一个相对不麻烦的事情，但是我却在第一步卡了很久。特此记录一下一个小坑。<br>首先，在 Mac 上通过 Boot Camp Assistant 安装 Win10, 要先确保您的 Mac 是支持 Win10 的机型，其次需要判断您的 Mac 机型是否需要通过一个外部闪存驱动器来安装，这些都可以从 <a href="https://support.apple.com/zh-cn/HT201468" target="_blank" rel="noopener">Apple官网</a> 找到。<br>我的机型是 Macbook Pro Mid 2014, 是需要连接一个U盘作为驱动器来安装的，但是试了很多次，Boot Camp 总说分区失败，网上试了很多方法都没有解决问题。<br>后来我想，Boot Camp 提示分区失败，那我就试着自己分区试试，于是我就用 Mac 自带的磁盘工具试着将磁盘分区，果然也分区失败了，但是通过 Detail 提示，我看到了 time machine 这个关键的提示。网上一查发现，Time Machine 的本地快照会导致分区失败的问题，具体如何导致的我也不关心，只要知道把它删掉就好了！不过TimeMachine 本地快照从 macOS 10.13 开始便关不掉了，只能逐条清理。执行命令：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">sudo tmutil listlocalsnapshots &#x2F;</span><br></pre></td></tr></table></figure>
+<p>会显示你最近的备份，每一条备份当中的「com.apple.TimeMachine.」字串删除（所有小数点都得删），剩下的日期字串就是每一条备份的认证码，然后执行</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">tmutil deletelocalsnapshots 认证码</span><br></pre></td></tr></table></figure>
+<p>就可以删掉 TM 备份，然后我的 Boot Camp 分区也成功了，Win10 也顺利的安装好了！</p>
+<p>Reference: </p>
+<ol>
+<li><a href="https://zhuanlan.zhihu.com/p/39689057" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/39689057</a></li>
+<li><a href="https://sspai.com/post/44023" target="_blank" rel="noopener">https://sspai.com/post/44023</a></li>
+</ol>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://silksong.me">SONG Zixin</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://silksong.me/2019/06/14/install-win10-in-Mac/">http://silksong.me/2019/06/14/install-win10-in-Mac/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/Mac/">Mac</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2020/02/10/RxSwift-Delegate/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">RxSwift 自定义 Delegate 实现</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2019/06/14/%E9%87%91%E5%B7%9E%E5%8B%87%E5%A3%AB%E8%BE%93%E4%BA%86/">
+        <span class="next-text nav-default">金州勇士输了</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:szxsilk@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/SilkSong" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://twitter.com/silk_Song001" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://stackoverflow.com/users/4259766/silk-song" target="_blank" rel="noopener" class="iconfont icon-stack-overflow" title="stack-overflow"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">SONG Zixin</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://silksong.me/2019/06/14/install-win10-in-Mac/';
+        this.page.identifier = '2019/06/14/install-win10-in-Mac/';
+        this.page.title = 'install win10 in Mac 采坑记录';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//silksong.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

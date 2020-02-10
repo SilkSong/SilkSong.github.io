@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="一直对 iOS 的动画很感兴趣，美好的交互体验的确会给 App 的使用带来愉悦的感觉，也能让开发者引导着用户正确的使用 App。 最近学习了 Ray 的 Beginning iOS Animations，试着总结一下知识点，权当复习。"/><meta name="keywords" content="iOS, Swift, Animations, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://silksong.me/2017/07/18/Beginning-iOS-Animations/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Beginning iOS Animations - SilkSong's Blog</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">SilkSong's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">SilkSong's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Beginning iOS Animations
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-07-18
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Constraint-Animations"><span class="toc-text">Constraint Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intermediate-Constraints"><span class="toc-text">Intermediate Constraints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Animation"><span class="toc-text">Spring Animation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Transitions"><span class="toc-text">View Transitions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Beginning-View-Animations"><span class="toc-text">Beginning View Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intermediate-View-Animations"><span class="toc-text">Intermediate View Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Keyframe-Animations"><span class="toc-text">Keyframe Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intermediate-View-Controller-Transitions"><span class="toc-text">Intermediate View Controller Transitions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最后"><span class="toc-text">最后</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>一直对 iOS 的动画很感兴趣，美好的交互体验的确会给 App 的使用带来愉悦的感觉，也能让开发者引导着用户正确的使用 App。 最近学习了 Ray 的 Beginning iOS Animations，试着总结一下知识点，权当复习。</p>
+<h3 id="Constraint-Animations"><a href="#Constraint-Animations" class="headerlink" title="Constraint Animations"></a>Constraint Animations</h3><p>在看这一部分之前，我只看过和约束无关的动画代码，它们非常不一样。然而，其实 non-constraint animations 只是你通过 animation block 直接改变一个视图的属性, 之后 UIKit 会自动想办法如何创造出动画而已。</p>
+<p><code>layoutIfNeeded()</code> 会对于 layout 的每一个视图更新 center, bounds, 任何一个可以动画化的改变都会发生动画效果，因为 bounds 是一个 animatable property, 即使 textLabel 的文字瞬间变化，它的 size 可能不能立刻赶上它的内容, 于是在你自定义的 animation.duration 里面它会完成这个动画效果，如：<br>可以对一个视图的 constraint outlet 进行三元操作，然后定义一个基本的动画效果 </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">titleLabel.text &#x3D; isMenuOpen:  &quot;Select Item&quot; : &quot;Picking List&quot; </span><br><span class="line">MenuHeightConstraint.constant &#x3D; isMenuOpen ？ 200 : 60</span><br><span class="line"></span><br><span class="line">UIView.animate (</span><br><span class="line"> withDuration: 0.33, </span><br><span class="line"> delay: 0.0,</span><br><span class="line"> options: .curveEaseIn,</span><br><span class="line"> animations: &#123;</span><br><span class="line">    self.view.layoutIfNeeded()</span><br><span class="line"> &#125;</span><br><span class="line"> completion: nil )</span><br></pre></td></tr></table></figure>
+
+<h3 id="Intermediate-Constraints"><a href="#Intermediate-Constraints" class="headerlink" title="Intermediate Constraints"></a>Intermediate Constraints</h3><p>对于进阶一点的约束动画，在这里只的是像 <code>multiplier</code> 一样的 get only property。 通常可以使用 Storyboard 和纯代码两种方式进行multiplier constraint 的设置。<br> 在使用 Storyboard 的时候，可以设置 <code>constraint.identifier</code>, 然后 isActive = false, 就相当于删掉了这个约束，然后通过创建一个与其 identifier 相同的一个新的约束即可，然后不要忘记设置 <code>isActive = true</code>, 这里的思想就是既然属性只是可读，那就干脆删掉这个约束，重新创建一个。</p>
+<p> 在这里，我对于 frame.size.width 和 frame.width 这两个概念模糊不清, google 搜到了 stackoverflow 上的一个回答，又自己查阅了文档，算是搞明白了。</p>
+<blockquote>
+<p> Regardless of whether the height is stored in the CGRect data structure as a positive or negative number, this function returns the height as if the rectangle were standardized. That is, the result is never a negative number.<br>A CGSize structure is sometimes used to represent a distance vector, rather than a physical size. As a vector, its values can be negative. To normalize a CGRect structure so that its size is represented by positive values, call the standardized function.</p>
+</blockquote>
+<p>size 是属于 CGSize 结构体，而 frame 是属于 CGRect 结构体，于是差别显而易见了，frame.width 只可以是正值，而 frame.size.width 可以是负值，可以通过 <code>standardized</code> 方法取正。<br>另外，可以通过定义看到 CGRect 定义的 width, height 属性只有 getter， 所以当我们需要为其赋值的时候，就只能使用 frame.size.width 了</p>
+<h3 id="Spring-Animation"><a href="#Spring-Animation" class="headerlink" title="Spring Animation"></a>Spring Animation</h3><p>只需要在 UIView.animate() 中添加 <code>uingSpringWithDamping</code> and <code>initialSpringVolocity</code><br>Damping: 震动越大，越接近于 0。不过，值的设定还是会带来显而易见的差别，需要更多的使用来慢慢体会。</p>
+<h3 id="View-Transitions"><a href="#View-Transitions" class="headerlink" title="View Transitions"></a>View Transitions</h3><p>实例代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">UIView.transition(</span><br><span class="line">        with: imageView,</span><br><span class="line">        duration: 1.0,</span><br><span class="line">        options: [</span><br><span class="line">          .curveEaseIn,</span><br><span class="line">          .transitionFlipFromBottom</span><br><span class="line">        ],</span><br><span class="line">        animations: &#123;</span><br><span class="line">          imageView.isHidden &#x3D; true</span><br><span class="line">        &#125;,</span><br><span class="line">        completion: &#123;_ in</span><br><span class="line">          imageView.removeFromSuperview()</span><br><span class="line">        &#125;</span><br><span class="line">      )</span><br></pre></td></tr></table></figure>
+<p> 其实主要就是通过这个函数，通过在 animations 的闭包里的 triggers 触发动画发生的条件，比如 <code>isHidden</code>, <code>addSubview()</code>, <code>removeFromSuperview()</code> 等，在 options 里可以对各种动画效果进行组合，往往会有很酷炫的效果~<br> 另外，一些 button 往往需要保证其在发生动画的时候也可以进行交互，此时可以在 options 中添加 <code>.allowUserInteraction</code></p>
+<h3 id="Beginning-View-Animations"><a href="#Beginning-View-Animations" class="headerlink" title="Beginning View Animations"></a>Beginning View Animations</h3><p>关于一个 View 通常有三类 property 可以 animate </p>
+<ul>
+<li>Position &amp; Size<ul>
+<li>bounds： Repositions a view’s content</li>
+<li>frame:  to move or resize a view</li>
+<li>center: mvoe a view to a new location onscreen</li>
+</ul>
+</li>
+<li>Transformation:  <ul>
+<li>transform: <ul>
+<li>translation</li>
+<li>rotation</li>
+<li>scale</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Appearance: <ul>
+<li>backgroundColor</li>
+<li>alpha: creates fade in and fade out effects</li>
+</ul>
+</li>
+</ul>
+<p>这里比较实用的比如通过设置 alpha 值实现渐变效果，通过设置 center 或者 frame，当 label 的值改变时，可以有转变的效果。其步骤如下：</p>
+<ol>
+<li>Create &amp; Set up helper view</li>
+<li>Fade helper view</li>
+<li>Update background view and remove helper view </li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let overlayView &#x3D; UIImageView(frame: bgImageView.frame)</span><br><span class="line">    overlayView.image &#x3D; toImage</span><br><span class="line">    overlayView.alpha &#x3D; 0.0</span><br><span class="line">    bgImageView.superview?.insertSubview(overlayView, aboveSubview: bgImageView)</span><br><span class="line">    </span><br><span class="line">    UIView.animate(</span><br><span class="line">        withDuration: 0.5,</span><br><span class="line">        animations: &#123;</span><br><span class="line">            &#x2F;&#x2F;Fade helper view</span><br><span class="line">            overlayView.alpha &#x3D; 1.0</span><br><span class="line">        &#125;,</span><br><span class="line">        completion: &#123; _ in</span><br><span class="line">            &#x2F;&#x2F;Update background view and remove helper view</span><br><span class="line">            self.bgImageView.image &#x3D; toImage</span><br><span class="line">            overlayView.removeFromSuperview()</span><br><span class="line">        &#125;)</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F;Add </span><br><span class="line">    overlayView.center.y +&#x3D; 20</span><br><span class="line">    overlayView.bounds.size.width &#x3D; bgImageView.bounds.size.width * 1.3</span><br><span class="line">    </span><br><span class="line">    In UIView.animate closure &#123;</span><br><span class="line">     overlayView.center.y -&#x3D; 20</span><br><span class="line">            overlayView.bounds.size &#x3D; self.bgImageView.bounds.size</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Intermediate-View-Animations"><a href="#Intermediate-View-Animations" class="headerlink" title="Intermediate View Animations"></a>Intermediate View Animations</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func moveLabel(</span><br><span class="line">    label: UILabel,</span><br><span class="line">    text: String,</span><br><span class="line">    offset: CGPoint</span><br><span class="line">  ) &#123;</span><br><span class="line">    &#x2F;&#x2F;Create &amp; Set up helper label</span><br><span class="line">    let auxLabel &#x3D; duplicateLabel(label: label)</span><br><span class="line">    auxLabel.text &#x3D; text</span><br><span class="line">    </span><br><span class="line">    auxLabel.transform &#x3D; CGAffineTransform(translationX: offset.x, y: offset.y)</span><br><span class="line">    auxLabel.alpha &#x3D; 0</span><br><span class="line">    view.addSubview(auxLabel)</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F;Fade out &amp; translate real label</span><br><span class="line">    UIView.animate(</span><br><span class="line">        withDuration: 0.5,</span><br><span class="line">        delay: 0,</span><br><span class="line">        options: .curveEaseIn,</span><br><span class="line">        animations: &#123;</span><br><span class="line">            label.transform &#x3D; CGAffineTransform(translationX: offset.x, y: offset.y)</span><br><span class="line">            label.alpha &#x3D; 0</span><br><span class="line">        &#125;,</span><br><span class="line">        completion: nil</span><br><span class="line">    )</span><br><span class="line">    </span><br><span class="line">    &#x2F;&#x2F;Fade in &amp; translate helper label</span><br><span class="line">    UIView.animate(</span><br><span class="line">        withDuration: 0.25,</span><br><span class="line">        delay: 0.0,</span><br><span class="line">        options: .curveEaseIn,</span><br><span class="line">        animations: &#123;</span><br><span class="line">&#x2F;&#x2F;            auxLabel.transform &#x3D; CGAffineTransform(translationX: -offset.x, y: -offset.y)</span><br><span class="line">            auxLabel.transform &#x3D; .identity</span><br><span class="line">            auxLabel.alpha &#x3D; 1</span><br><span class="line">    &#125;,</span><br><span class="line">        completion: &#123; _ in</span><br><span class="line">            &#x2F;&#x2F;Update real label &amp; remove helper label</span><br><span class="line">            label.text &#x3D; text</span><br><span class="line">            label.alpha &#x3D; 1</span><br><span class="line">            label.transform &#x3D; .identity</span><br><span class="line">            </span><br><span class="line">            auxLabel.removeFromSuperview()</span><br><span class="line">        &#125;</span><br><span class="line">    )</span><br></pre></td></tr></table></figure>
+<h3 id="Keyframe-Animations"><a href="#Keyframe-Animations" class="headerlink" title="Keyframe Animations"></a>Keyframe Animations</h3><p>通过 <code>UIView.animateKeyframes</code> 函数，在 animations 的闭包里不断的添加 <code>UIView.addKeyframe</code> 来创建一段段的动画，看起来简单，但当面对一个动画效果，如何通过分析将其拆解成多个小部分，并较为准确的设置 <code>Duration</code> 和 <code>startTime</code>，让动画看起来流畅才是难点。这个过程往往需要调试很多很多次。</p>
+<p>###Beginning View Controller Transitions<br>每一个过渡都离不开 transition context，它包含一个 <code>containerView</code>, 可以视为一个 superview。<br>自定义过渡动画，需要继承两个 delegate ：</p>
+<ul>
+<li><code>UIViewControllerTransitioningDelegate</code> ： 每次你 present 或者 dismiss 一个 VC的时候  UIKit 都会询问这个 delegate 是否使用一个自定义的过渡动画，它有两个 required method，分别对应 present 和 dismiss 的具体行为</li>
+<li><code>UIViewConrollerAnimatedTransitioning</code>: 继承这个 delegate 的类往往叫做 animator, 也就是其具体定义动画的方式。其中，<code>transitionDuration</code> 定义动画的时间，而 <code>animateTransition</code> 则具体实现动画的内容。</li>
+</ul>
+<p>你需要通过在继承第一个协议的类中声明它的代理是继承了第二个协议的类，这样子才能将两个协议连接起来：<br><code>detailViewController.transitioningDelgate = view controller</code></p>
+<p>创建过渡动画的过程也通常有三步：</p>
+<ol>
+<li>Set up transition</li>
+<li>animate!</li>
+<li>complete transition </li>
+</ol>
+<p>知道真相的我眼泪掉下来，这不是和如何把大象🐘装到冰箱一样么…. lol<br>当然，其实具体的实现是非常的复杂..<br>这个过程中，有一个小坑，就是往往在第一步里面，我们需要设置好所有想要动画的试图的起始状态，比如说它的位置，它的大小，而往往它的 frame 和我们在 animator 里通过 containerView 调用的 frame 并不在统一坐标系里面，所以会造成动画效果失败，这时, 可以通过调用 </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">convert(_ rect: to view:)</span><br></pre></td></tr></table></figure>
+<p>它的作用在于将一个 矩形从 receiver 的坐标系转移到另一个视图所在的坐标系，如何其设置为 nil, 则会转移到 window 所在的坐标系，这个坐标系也往往会和进行转场动画所在的 VC 的坐标系相同。例子：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">transition.originFrame &#x3D; selectedImage!.superview!.convert(  selectedImage!.frame,to: nil )</span><br></pre></td></tr></table></figure>
+
+<h3 id="Intermediate-View-Controller-Transitions"><a href="#Intermediate-View-Controller-Transitions" class="headerlink" title="Intermediate View Controller Transitions"></a>Intermediate View Controller Transitions</h3><p>这一节更多的是具体的一些细节优化，如圆角动画等等</p>
+<h3 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h3><p>开发者在设计一个动画的时候， 要搞清楚它的目的，并且遵循 Apple’ design paradigms 和 Human User Interface, 好的动画往往能更直观的表达信息。过于复杂的动画反而会显得累赘，让交互看起来费劲。</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://silksong.me">SONG Zixin</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://silksong.me/2017/07/18/Beginning-iOS-Animations/">http://silksong.me/2017/07/18/Beginning-iOS-Animations/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/iOS/">iOS</a>
+            <a href="/tags/Swift/">Swift</a>
+            <a href="/tags/Animations/">Animations</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2017/07/24/dismiss-keyboard/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default"><译> Best Way to dismiss Keyboard in a View Controller iOS (Swift)</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2017/07/14/iOS-Apprentice-Part-2-Checklist-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
+        <span class="next-text nav-default">iOS Apprentice Part 2 Checklist 学习笔记</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:szxsilk@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/SilkSong" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://twitter.com/silk_Song001" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://stackoverflow.com/users/4259766/silk-song" target="_blank" rel="noopener" class="iconfont icon-stack-overflow" title="stack-overflow"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">SONG Zixin</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://silksong.me/2017/07/18/Beginning-iOS-Animations/';
+        this.page.identifier = '2017/07/18/Beginning-iOS-Animations/';
+        this.page.title = 'Beginning iOS Animations';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//silksong.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="Swift30Projects-05-CandySearch 的一些经验总结。"/><meta name="keywords" content="iOS, Swift, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://silksong.me/2017/07/31/Swift30Days-CandySearch/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>Swift30Days-CandySearch 开发总结 - SilkSong's Blog</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">SilkSong's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">SilkSong's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">Swift30Days-CandySearch 开发总结
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-07-31
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Color-设置"><span class="toc-text">Color 设置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#代码方法："><span class="toc-text">代码方法：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#StoryBoard设置"><span class="toc-text">StoryBoard设置:</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Search-Related"><span class="toc-text">Search Related</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>Swift30Projects-05-CandySearch 的一些经验总结。</p>
+<h3 id="Color-设置"><a href="#Color-设置" class="headerlink" title="Color 设置"></a>Color 设置</h3><p>在这个项目里我遇到的一个大问题就是在<code>NavigationController</code> - <code>UITableViewController</code> - <code>UITableViewController</code> 其中还包括 <code>UISearchController</code> 的结构中各种颜色设置问题。搜索了很多，也摸索了很多，在这里总结一下。<br>![Navigation bar fonts and colors](Swift30Days-CandySearch/Navigation bar fonts and colors.png)</p>
+<p>这张图可以清晰的看出一个 navigation Bar 上面的各种视图包括：返回按钮，背景，标题，分别由哪种属性定义</p>
+<h4 id="代码方法："><a href="#代码方法：" class="headerlink" title="代码方法："></a>代码方法：</h4><p>当你的 App 具有统一的 UI 的时候，可以直接在 <code>AppDelegate.swift</code> 的 </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -&gt; Bool</span><br></pre></td></tr></table></figure>
+<p>方法中进行全局设置，当然你也可以在子视图中通过<br>self.navigationController.navigationBar.tintColor 类似这样子的方式进行单独的定义，若没有单独定义，那么子视图的设置将会与父视图一致。</p>
+<p>在本 App 中，我添加了一个 <code>UIColor</code> 的 extension </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">extension UIColor &#123;</span><br><span class="line">    static func candyGreen() -&gt; UIColor &#123;</span><br><span class="line">        return UIColor(red: 67&#x2F;225, green: 205&#x2F;255, blue: 135&#x2F;255, alpha: 1)</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>然后，进行颜色的设置：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -&gt; Bool &#123;</span><br><span class="line">    </span><br><span class="line">    UINavigationBar.appearance().barTintColor &#x3D; UIColor.candyGreen()</span><br><span class="line">    UINavigationBar.appearance().tintColor &#x3D; .white</span><br><span class="line">    UINavigationBar.appearance().titleTextAttributes &#x3D; [NSAttributedStringKey.foregroundColor : UIColor.white]</span><br><span class="line">   </span><br><span class="line">    return true</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为 App 中有一个 <code>UISearchController</code>, 所以需要对 <code>SearchBar</code> 的颜色进行设置，其中 <code>barTintColor</code> 代表搜索条的<strong>背景颜色</strong>， <code>tintColor</code> 代表🔍栏处于编辑状态时，Cancel 按钮，光标，以及 <code>scopeButton</code>的颜色，在本 App 中设定为白色，但此时有一个问题，就是🔍栏的光标设为白色时，打字就无法显示光标，这显然很不友好，把它设为 <code>barTintColor</code> 的颜色是一种友好的解决方案，于是在上面代码的结尾处再加上</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">UISearchBar.appearance().barTintColor &#x3D;  UIColor.candyGreen()</span><br><span class="line">UISearchBar.appearance().tintColor &#x3D; UIColor.white</span><br><span class="line">UITextField.appearance(whenContainedInInstancesOf: [UISearchBar.self]).tintColor &#x3D; UIColor.candyGreen()</span><br></pre></td></tr></table></figure>
+
+<h4 id="StoryBoard设置"><a href="#StoryBoard设置" class="headerlink" title="StoryBoard设置:"></a>StoryBoard设置:</h4><p>与代码方法比较，在 StoryBoard 中设置比较简单，但是不如代码直观，而且似乎有些属性的颜色无法在 StoryBoard 设置，例如 navigationItem 的 title, 可能因为它不是一个视图吧？<br>Navigation Bar 背景色：Navigation Bar -&gt; Bar Tint<br>Navigation Bar 返回按钮：Navigation Bar -&gt; View -&gt; Tint<br>至于 <code>UISearchBar</code>, 由于本 App 是直接写代码通过 <code>UISearchController</code> 创建，在 StoryBoard 里也无法设置</p>
+<h3 id="Search-Related"><a href="#Search-Related" class="headerlink" title="Search Related"></a>Search Related</h3><p>在这个 project 中重点学习了在 TableView 中添加搜索功能的一些方法实现</p>
+<ul>
+<li>searchController 的设置：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">let searchController &#x3D; UISearchController(searchResultsController: nil)</span><br><span class="line"></span><br><span class="line">override func viewDidLoad() &#123;</span><br><span class="line">        </span><br><span class="line">        super.viewDidLoad()</span><br><span class="line">        </span><br><span class="line">        searchController.searchResultsUpdater &#x3D; self</span><br><span class="line">        searchController.dimsBackgroundDuringPresentation &#x3D; false</span><br><span class="line">        definesPresentationContext &#x3D; true</span><br><span class="line">        tableView.tableHeaderView &#x3D; searchController.searchBar</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p>在 tableView 的 dataSource 方法中 通过 <code>searchController.isActive</code> 来决定 cell 的配置</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func updateSearchResults(for searchController: UISearchController)</span><br></pre></td></tr></table></figure>
+<p>用来实时显示搜索结果</p>
+</li>
+<li><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int)</span><br></pre></td></tr></table></figure>
+<p>用来进行分类搜索，其中不要忘记设置</p>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">searchController.searchBar.delegate &#x3D; self</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><strong>一个重要的环节</strong>就是当 TableView 展示出正确的搜索结果，点击 cell, 展示 DetailViewController 的时候，记得在 <code>prepare(for segue)</code> 方法中使用搜索后的结果，因为此时 <code>indexPath</code> 已经完全不一样</li>
+</ul>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://silksong.me">SONG Zixin</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://silksong.me/2017/07/31/Swift30Days-CandySearch/">http://silksong.me/2017/07/31/Swift30Days-CandySearch/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/iOS/">iOS</a>
+            <a href="/tags/Swift/">Swift</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2017/07/31/elegant-edit-mode-method/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">一种简洁的 Edit Mode 实现方式</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2017/07/24/dismiss-keyboard/">
+        <span class="next-text nav-default"><译> Best Way to dismiss Keyboard in a View Controller iOS (Swift)</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:szxsilk@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/SilkSong" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://twitter.com/silk_Song001" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://stackoverflow.com/users/4259766/silk-song" target="_blank" rel="noopener" class="iconfont icon-stack-overflow" title="stack-overflow"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">SONG Zixin</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://silksong.me/2017/07/31/Swift30Days-CandySearch/';
+        this.page.identifier = '2017/07/31/Swift30Days-CandySearch/';
+        this.page.title = 'Swift30Days-CandySearch 开发总结';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//silksong.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>

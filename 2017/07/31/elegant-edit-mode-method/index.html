@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="一个简单的 ToDo 应用，如何简洁，优雅的实现删除，排序功能。以及当没有 Data 时，展示 No Data Available 页面的代码实现。"/><meta name="keywords" content="iOS, Swift, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://silksong.me/2017/07/31/elegant-edit-mode-method/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>一种简洁的 Edit Mode 实现方式 - SilkSong's Blog</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">SilkSong's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">SilkSong's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">一种简洁的 Edit Mode 实现方式
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-07-31
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Edit-Mode"><span class="toc-text">Edit Mode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#No-Data-BackGroundView"><span class="toc-text">No Data BackGroundView</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>Swift30Days-03-ToDo, 在学习的过程中想总结一下一个简单的 ToDo 应用，如何简洁，优雅的实现删除，排序功能。以及当没有 Data 时，展示 No Data Available 页面的代码实现。</p>
+<h3 id="Edit-Mode"><a href="#Edit-Mode" class="headerlink" title="Edit Mode"></a>Edit Mode</h3><p>在实现的过程中，尝试了很多方法，例如在 StoryBoard 中添加一个 <code>NavigationBarItem</code>, 然后关联一个动作，发现不但要处理 Edit/Done 两种不同状态的逻辑，而且单单是按钮在 Edit/Done 里那种状态的转换，就让初学的我大伤脑筋。用纯代码的方式，分别创建 Edit, Done 两个 Button, 代码也是特别复杂。在 Stackoverflow 和 谷歌搜索良久，终于发现了一个优雅的实现方法！</p>
+<blockquote>
+<p>editButtonItem：Returns a bar button item that toggles its title and associated state between Edit and Done.<br>Discussion: If one of the custom views of the navigationItem property is set to the returned object, the associated navigation bar displays an Edit button if isEditing is false and a Done button if isEditing is true. The default button action invokes the setEditing(_:animated:) method.</p>
+</blockquote>
+<p>踏破铁鞋无觅处，得来全不费工夫。原来 <code>UIViewController</code> 自身就有一个这样子的属性, Cocoa 已经全部帮你实现好了其基本的功能。所以只需要</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">navigationItem.leftBarButtonItem &#x3D; self.editButtonItem</span><br></pre></td></tr></table></figure>
+<p>就可以创建好这个 Edit Button。<br>接下来需要做的就只是具体实现删除，排序两个方法。只需要 override </p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) &#123;</span><br><span class="line">       if editingStyle &#x3D;&#x3D; .delete &#123;</span><br></pre></td></tr></table></figure>
+<p>这两个 <code>UITableViewDataSource</code> Protocol Method 就好了，实现的方法也十分简单，先对数据进行操作，再对视图进行操作使其展示正确的数据，这是一个基本原则。</p>
+<h3 id="No-Data-BackGroundView"><a href="#No-Data-BackGroundView" class="headerlink" title="No Data BackGroundView"></a>No Data BackGroundView</h3><p>![No Data View](elegant-edit-mode-method/No Data View.png)</p>
+<p>一个 <code>TableView</code> 当没有数据的时候，展示一个 “No data currently Availabel” 的视图，当添加上数据的时候，再重新展示一个 TableView 是一个很友好的体验。在这个过程中，其思路是通过判断 <code>numberOfSections</code>, 当没有数据的时候，section   数量为0，重新设定 backgroundView, 当有数据的时候，section 数量为一。 具体代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">override func numberOfSections(in tableView: UITableView) -&gt; Int &#123;</span><br><span class="line">       </span><br><span class="line">       var numbOfSections &#x3D; 0</span><br><span class="line">       if todoList.count !&#x3D; 0 &#123;</span><br><span class="line">           numbOfSections &#x3D; 1</span><br><span class="line">           tableView.separatorStyle &#x3D; .singleLine</span><br><span class="line">           tableView.backgroundView &#x3D; nil</span><br><span class="line">           </span><br><span class="line">       &#125; else &#123;</span><br><span class="line">           let noDataLabel &#x3D; UILabel(frame: CGRect(x: 0, y: 0, width: tableView.bounds.size.width, height: tableView.bounds.size.height))</span><br><span class="line">           noDataLabel.text &#x3D; &quot;No data is currently available&quot;</span><br><span class="line">           noDataLabel.font &#x3D; UIFont(name: &quot;TimesNewRomanPS-ItalicMT&quot;, size: 20.0)</span><br><span class="line">           noDataLabel.textAlignment &#x3D; .center</span><br><span class="line">           tableView.backgroundView &#x3D; noDataLabel</span><br><span class="line">           tableView.separatorStyle &#x3D; .none</span><br><span class="line">       &#125;</span><br><span class="line">       return numbOfSections</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>一切都运行正常，当视图一开始没有数据的时候，TableView 会展示一个提示，当添加一个数据的时候，会重新出现一行行的 cell。但是我发现当删除最后一行 cell 的时候，程序崩溃了！<br>经过查看 Log 和 搜索，发现原来当 <code>tableView.deleteRows(at: [indexPath], with: .top)</code> 删除最后一行 cell  的时候，numberofSections 就变成了0，然而 deleteRows 并不会删除 Section，所以程序崩溃掉了。一个简单的做法就是在对数据操作完成后，直接 <code>tableView.reloadData()</code> 但是这样一是面对数量较大的视图的时候，特别的耗费性能，其次这样子无法展示 rows 被删除的动画效果，给人感觉太突兀。所以这绝对算不上一个好的解决方法。正确的做法是在本方法内调用 <code>deleteSections</code> 方法, 具体如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) &#123;</span><br><span class="line">    if editingStyle &#x3D;&#x3D; .delete &#123;</span><br><span class="line">        todoList.remove(at: indexPath.row)</span><br><span class="line">        if todoList.count &#x3D;&#x3D; 0 &#123;</span><br><span class="line">            tableView.deleteSections(IndexSet(integer: indexPath.section), with: .automatic)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">        tableView.deleteRows(at: [indexPath] , with: .bottom)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样子，问题就得到解决了。</p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://silksong.me">SONG Zixin</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://silksong.me/2017/07/31/elegant-edit-mode-method/">http://silksong.me/2017/07/31/elegant-edit-mode-method/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/iOS/">iOS</a>
+            <a href="/tags/Swift/">Swift</a>
+            </div>
+        
+        <nav class="post-nav"><a class="prev" href="/2017/11/20/new-blog-theme/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">博客更换主题采坑记</span>
+        <span class="prev-text nav-mobile">Prev</span>
+      </a>
+    <a class="next" href="/2017/07/31/Swift30Days-CandySearch/">
+        <span class="next-text nav-default">Swift30Days-CandySearch 开发总结</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:szxsilk@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/SilkSong" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://twitter.com/silk_Song001" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://stackoverflow.com/users/4259766/silk-song" target="_blank" rel="noopener" class="iconfont icon-stack-overflow" title="stack-overflow"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">SONG Zixin</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://silksong.me/2017/07/31/elegant-edit-mode-method/';
+        this.page.identifier = '2017/07/31/elegant-edit-mode-method/';
+        this.page.title = '一种简洁的 Edit Mode 实现方式';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//silksong.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>
