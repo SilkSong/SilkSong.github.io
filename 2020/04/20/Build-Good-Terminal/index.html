@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head><meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+<meta name="description" content="终端是每个程序员，无论你的水平高低，日常工作中必然会接触到的东西，无论是一个文件的打开，还是一个 Git commit 的提交，通过命令行的方式进行指令的输入，不仅会显得 “酷”，更重要的是，很多时候是高效简洁的"/><meta name="keywords" content="iTerm, Oh-My-Zsh, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
+<link rel="canonical" href="http://silksong.me/2020/04/20/Build-Good-Terminal/"/>
+
+<link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
+
+<script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+<script>
+  window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
+</script>
+
+    <title>打造一个简单好看实用的终端：Oh-My-Zsh 安装，配置，以及设置终端代理 - SilkSong's Blog</title>
+  <meta name="generator" content="Hexo 4.2.0"></head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">SilkSong's Blog</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list"><a href="/">
+        <li class="mobile-menu-item">Home
+          </li>
+      </a><a href="/archives/">
+        <li class="mobile-menu-item">Archives
+          </li>
+      </a><a href="/tags">
+        <li class="mobile-menu-item">Tags
+          </li>
+      </a></ul>
+</nav>
+<div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">SilkSong's Blog</a>
+</div>
+
+<nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
+          <a class="menu-item-link" href="/">
+            Home
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            Archives
+            </a>
+        </li>
+      <li class="menu-item">
+          <a class="menu-item-link" href="/tags">
+            Tags
+            </a>
+        </li>
+      </ul></nav>
+</header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content"><article class="post">
+    <header class="post-header">
+      <h1 class="post-title">打造一个简单好看实用的终端：Oh-My-Zsh 安装，配置，以及设置终端代理
+        </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-04-20
+        </span></div>
+    </header>
+
+    <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">Contents</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Oh-My-Zsh-安装及配置"><span class="toc-text">Oh-My-Zsh 安装及配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#主题安装及简单配置"><span class="toc-text">主题安装及简单配置</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设置终端代理"><span class="toc-text">设置终端代理</span></a></li></ol>
+    </div>
+  </div><div class="post-content"><p>终端是每个程序员，无论你的水平高低，日常工作中必然会接触到的东西，无论是一个文件的打开，还是一个 Git commit 的提交，通过命令行的方式进行指令的输入，不仅会显得 “酷”，更重要的是，很多时候是高效简洁的。</p>
+<p>然后在我进行这篇文章的实践之前，我的终端是黑色的底搭配白色的字，手敲文件路径，以及身在大陆，面对访问一些海外服务器时，时常会遇到下载速度特别特别慢的窘境。这些都一定程度上降低了我的效率和使用终端的心情。</p>
+<p>所以，如果你和我一样，是一个还不太会使用终端的入门级程序员，那么这篇文章，会带你打造一个界面好看，实用，又简单的终端。（文章所有配置基于 macOS 系统，iTerm 2 软件以及 Shadowsocks 协议的科学上网服务）</p>
+<h2 id="Oh-My-Zsh-安装及配置"><a href="#Oh-My-Zsh-安装及配置" class="headerlink" title="Oh-My-Zsh 安装及配置"></a>Oh-My-Zsh 安装及配置</h2><p>开始之前先简单弄明白一个概念：Shell 是命令行界面的解析器，用户输入一条命令，Shell 解析它来与计算机内核进行交互。我们的终端(Terminal) 可以运行不同的 Shell，常见的有sh, bash，我们要用到的 zsh 也是 shell 的一种。最新的 macOS 系统默认安装了所有的 shell, 并且默认的 shell 就是 zsh。若你的默认 shell 不是 zsh, 你可以通过 <code>echo $SHELL</code> 查看当前的 shell；终端输入 <code>chsh -s /bin/zsh</code>, 输入密码，重启终端即可切换到 zsh。</p>
+<p><a href="https://github.com/ohmyzsh/ohmyzsh" target="_blank" rel="noopener">Oh-My-Zsh</a> 是一个管理你 zsh 配置的框架，你可以去到它的 Github 页面进行更详细的了解，里面有无数的配置等着你去探索，但也不要被它吓到，只需跟着这篇文章进行简单的配置，你的终端就会焕然一新。</p>
+<h4 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h4><p>Oh-My-Zsh 官方提供了两种方式进行安装：在终端输入下面的命令即可</p>
+<ul>
+<li>curl:<br><code>sh -c &quot;$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</code><ul>
+<li>wget:<br><code>sh -c &quot;$(wget -O- https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)&quot;</code></li>
+</ul>
+</li>
+</ul>
+<p>如果你能顺利安装自然好，但我在安装期间始终报错，你也可以直接通过 <code>git clone https://github.com/ohmyzsh/ohmyzsh.git</code> 把项目下载到本地根目录下，这个过程，如果你的终端没有设置代理的话，速度会很慢，没关系，文章稍后会解决这个问题。</p>
+<p>然后创建一个新的 zsh 配置文件<br><code>cp ~/ohmyzsh/templates/zshrc.zsh-template ~/.zshrc</code></p>
+<p>如果你不会用 vim，可以通过 Finder 输入 Command + Shift + G, 输入 ~/.zshrc 找到这个文件然后打开它。打开后的是一个配置文件模板，我们需要把最上面的路径修改为 <code>export ZSH=$HOME/ohmyzsh</code>，这是我们 clone 下来的正确文件目录，然后输入 <code>source ~/.zshrc</code> 或者重启终端你就可以看到它已经变得不一样了。</p>
+<h4 id="主题安装及简单配置"><a href="#主题安装及简单配置" class="headerlink" title="主题安装及简单配置"></a>主题安装及简单配置</h4><p>Oh-My-Zsh 本身提供了很多的主题可供选择，他们都在 ohmyzsh/themes 文件夹下，我使用的是 <a href="https://draculatheme.com/zsh" target="_blank" rel="noopener">Dracula</a> 主题，首先跟随其步骤为 zsh 设置好主题, 然后设置 iTerm 2 的主题 <a href="https://draculatheme.com/iterm" target="_blank" rel="noopener">iTerm</a>, 同样很简单的跟随其步骤设置好。</p>
+<p>然后设置语法高亮：使用 <code>homebrew</code> 安装 <code>zsh-syntax-highlighting</code> 插件 <code>brew install zsh-syntax-highlighting</code>, 然后在根目录下的 .zshrc 配置文件插入<br><code>source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh</code></p>
+<p>输入 <code>source ~/.zshrc</code> 或者重启终端，你终于可以对着电脑屏幕说一句 “你看起来真好看！”<br><img src="media/15873725002797/Screen%20Shot%202020-04-20%20at%2016.54.22.png" alt="Screen Shot 2020-04-20 at 16.54.22"><br>Oh-My-Zsh 还提供了很多人性化的功能，比如</p>
+<ul>
+<li>输入目录名即可进入，不用 cd，输入 .. 即可到上级目录，返回上次目录输入 -<ul>
+<li>输入 d 即可看到目录列表</li>
+<li>连按两次 tab 会补全列表，补全项可以使用 ctrl+n/p/f/b 上下左右切换，和在 IDE 中移动光标一致</li>
+</ul>
+</li>
+</ul>
+<p>另外还有 zsh-autosuggestions，autojump 等高效的插件可供选择。</p>
+<h2 id="设置终端代理"><a href="#设置终端代理" class="headerlink" title="设置终端代理"></a>设置终端代理</h2><p>通过对终端设置代理可以大大提高工作的效率，这里主要是针对 基于 Socks5 通信的，使用 Shadowsocks 协议的科学上网服务进行配置。但无论是 socket 通信还是 http通信，端口不同但设置方式差别不大，如果你的情况与我不同，可自行查阅具体代码设置。</p>
+<p>个人认为最好的设置方式就是直接在上文提到的 .zshrc 配置文件中写入代理，这样子既可以永久保存，下次直接使用，还可以设置 alias, 使用起来非常方便。编辑 .zshrc 文件，添加</p>
+<p><code>alias proxy=&quot;export ALL_PROXY=socks5://127.0.0.1:7891&quot;
+alias unproxy=&quot;unset ALL_PROXY&quot;</code></p>
+<p>其中 7891 是我本地的 Socks5 代理端口，你自己的端口可以通过你的代理软件或者你的网络偏好设置查看。<br>可以用过 <code>curl ip.gs</code> 的方式进行验证，可以发现，输入 <code>proxy</code> 之后，IP地址已经变更，输入 <code>unproxy</code> 之后 IP 地址恢复。</p>
+<p><img src="media/15873725002797/Screen%20Shot%202020-04-20%20at%2018.42.59.png" alt="Screen Shot 2020-04-20 at 18.42.59"><br>另外，还可以对 Git 进行单独设置：<code>open ~/.gitconfig</code> 打开 Git 配置文件，<br>添加 <code>[http] proxy = socks5://127.0.0.1:7891</code> 这种情况适用于 <code>git clone https://项目.git</code> 的情况，注意：是没有必要添加<code>[https] proxy</code> 设置的，git 是没有 https_proxy 这个 config section 的。<br>而对于 <code>git clone git@项目.git</code> 的情况，由于使用的是 SSH 协议，则需要在 ~/.ssh/config 目录下配置：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Host github.com</span><br><span class="line">ProxyCommand nc -X 5 -x 127.0.0.1:1080 %h %p</span><br></pre></td></tr></table></figure>
+
+<p>可以看到设置好的终端通过 SSH clone 大型项目的时候，速度轻松达到了 2.3MB/s</p>
+<p><img src="media/15873725002797/Screen%20Shot%202020-04-20%20at%2016.38.40.png" alt="Screen Shot 2020-04-20 at 16.38.40"></p>
+
+      </div>
+      <div class="post-copyright">
+    <p class="copyright-item">
+      <span>Author: </span>
+      <a href="http://silksong.me">SONG Zixin</a>
+    </p>
+    <p class="copyright-item">
+      <span>Link: </span>
+      <a href="http://silksong.me/2020/04/20/Build-Good-Terminal/">http://silksong.me/2020/04/20/Build-Good-Terminal/</a>
+    </p>
+    <p class="copyright-item">
+      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+      <footer class="post-footer">
+        <div class="post-tags">
+            <a href="/tags/iTerm/">iTerm</a>
+            <a href="/tags/Oh-My-Zsh/">Oh-My-Zsh</a>
+            </div>
+        
+        <nav class="post-nav"><a class="next" href="/2020/02/10/RxSwift-Delegate/">
+        <span class="next-text nav-default">RxSwift 自定义 Delegate 实现</span>
+        <span class="prev-text nav-mobile">Next</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    </nav></footer>
+    </article></div><div class="comments" id="comments"><div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript" target="_blank" rel="noopener">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div></div>
+      </main>
+
+      <footer id="footer" class="footer"><div class="social-links"><a href="mailto:szxsilk@gmail.com" class="iconfont icon-email" title="email"></a>
+        <a href="https://github.com/SilkSong" target="_blank" rel="noopener" class="iconfont icon-github" title="github"></a>
+        <a href="https://twitter.com/silk_Song001" target="_blank" rel="noopener" class="iconfont icon-twitter" title="twitter"></a>
+        <a href="https://stackoverflow.com/users/4259766/silk-song" target="_blank" rel="noopener" class="iconfont icon-stack-overflow" title="stack-overflow"></a>
+        <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    </div><div class="copyright">
+  <span class="power-by">
+    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    Theme - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
+  </span>
+
+  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">SONG Zixin</span>
+  </span>
+</div>
+</footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div><script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://silksong.me/2020/04/20/Build-Good-Terminal/';
+        this.page.identifier = '2020/04/20/Build-Good-Terminal/';
+        this.page.title = '打造一个简单好看实用的终端：Oh-My-Zsh 安装，配置，以及设置终端代理';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//silksong.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script><script type="text/javascript" src="/lib/jquery/jquery.min.js"></script>
+  <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  <script type="text/javascript" src="/lib/fancybox/jquery.fancybox.pack.js"></script>
+  <script type="text/javascript" src="/js/src/even.js?v=2.11.0"></script>
+</body>
+</html>
