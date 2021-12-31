@@ -14,25 +14,11 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 <meta name="description" content="一直对 iOS 的动画很感兴趣，美好的交互体验的确会给 App 的使用带来愉悦的感觉，也能让开发者引导着用户正确的使用 App。 最近学习了 Ray 的 Beginning iOS Animations，试着总结一下知识点，权当复习。"/><meta name="keywords" content="iOS, Swift, Animations, SilkSong's Blog" /><link rel="alternate" href="/default" title="SilkSong's Blog"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.11.0" />
-<link rel="canonical" href="http://silksong.me/2017/07/18/Beginning-iOS-Animations/"/>
+<link rel="canonical" href="http://silksong.me/2017/07/17/Beginning-iOS-Animations/"/>
 
 <link rel="stylesheet" type="text/css" href="/lib/fancybox/jquery.fancybox.css" />
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.11.0" />
 
-<script id="baidu_push">
-(function(){
-    var bp = document.createElement('script');
-    var curProtocol = window.location.protocol.split(':')[0];
-    if (curProtocol === 'https') {
-        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
-    }
-    else {
-        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
-    }
-    var s = document.getElementsByTagName("script")[0];
-    s.parentNode.insertBefore(bp, s);
-})();
-</script>
 <script>
   window.config = {"leancloud":{"app_id":null,"app_key":null},"toc":true,"fancybox":true,"pjax":"","latex":false};
 </script>
@@ -53,13 +39,13 @@
 
 <nav id="mobile-menu" class="mobile-menu slideout-menu">
   <ul class="mobile-menu-list"><a href="/">
-        <li class="mobile-menu-item">Home
+        <li class="mobile-menu-item">首页
           </li>
       </a><a href="/archives/">
-        <li class="mobile-menu-item">Archives
+        <li class="mobile-menu-item">归档
           </li>
       </a><a href="/tags">
-        <li class="mobile-menu-item">Tags
+        <li class="mobile-menu-item">标签
           </li>
       </a></ul>
 </nav>
@@ -70,17 +56,17 @@
 
 <nav class="site-navbar"><ul id="menu" class="menu"><li class="menu-item">
           <a class="menu-item-link" href="/">
-            Home
+            首页
             </a>
         </li>
       <li class="menu-item">
           <a class="menu-item-link" href="/archives/">
-            Archives
+            归档
             </a>
         </li>
       <li class="menu-item">
           <a class="menu-item-link" href="/tags">
-            Tags
+            标签
             </a>
         </li>
       </ul></nav>
@@ -95,12 +81,12 @@
 
       <div class="post-meta">
         <span class="post-time">
-          2017-07-18
+          2017-07-17
         </span></div>
     </header>
 
     <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">Contents</h2>
+    <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
       <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Constraint-Animations"><span class="toc-text">Constraint Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intermediate-Constraints"><span class="toc-text">Intermediate Constraints</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Spring-Animation"><span class="toc-text">Spring Animation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View-Transitions"><span class="toc-text">View Transitions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Beginning-View-Animations"><span class="toc-text">Beginning View Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intermediate-View-Animations"><span class="toc-text">Intermediate View Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Keyframe-Animations"><span class="toc-text">Keyframe Animations</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Intermediate-View-Controller-Transitions"><span class="toc-text">Intermediate View Controller Transitions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#最后"><span class="toc-text">最后</span></a></li></ol>
     </div>
@@ -175,15 +161,15 @@
       </div>
       <div class="post-copyright">
     <p class="copyright-item">
-      <span>Author: </span>
+      <span>原文作者: </span>
       <a href="http://silksong.me">SONG Zixin</a>
     </p>
     <p class="copyright-item">
-      <span>Link: </span>
-      <a href="http://silksong.me/2017/07/18/Beginning-iOS-Animations/">http://silksong.me/2017/07/18/Beginning-iOS-Animations/</a>
+      <span>原文链接: </span>
+      <a href="http://silksong.me/2017/07/17/Beginning-iOS-Animations/">http://silksong.me/2017/07/17/Beginning-iOS-Animations/</a>
     </p>
     <p class="copyright-item">
-      <span>License: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+      <span>许可协议: </span><a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
     </p>
   </div>
       <footer class="post-footer">
@@ -196,11 +182,11 @@
         <nav class="post-nav"><a class="prev" href="/2017/07/24/dismiss-keyboard/">
         <i class="iconfont icon-left"></i>
         <span class="prev-text nav-default"><译> Best Way to dismiss Keyboard in a View Controller iOS (Swift)</span>
-        <span class="prev-text nav-mobile">Prev</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     <a class="next" href="/2017/07/14/iOS-Apprentice-Part-2-Checklist-%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
         <span class="next-text nav-default">iOS Apprentice Part 2 Checklist 学习笔记</span>
-        <span class="prev-text nav-mobile">Next</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     </nav></footer>
@@ -220,15 +206,15 @@
         <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
     </div><div class="copyright">
   <span class="power-by">
-    Powered by <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>
+    由 <a class="hexo-link" href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> 强力驱动
   </span>
   <span class="division">|</span>
   <span class="theme-info">
-    Theme - 
+    主题 - 
     <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even" target="_blank" rel="noopener">Even</a>
   </span>
 
-  <span class="copyright-year">&copy;2017 - 2020<span class="heart">
+  <span class="copyright-year">&copy;2017 - 2021<span class="heart">
       <i class="iconfont icon-heart"></i>
     </span>
     <span class="author">SONG Zixin</span>
@@ -241,8 +227,8 @@
       </div>
     </div><script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://silksong.me/2017/07/18/Beginning-iOS-Animations/';
-        this.page.identifier = '2017/07/18/Beginning-iOS-Animations/';
+        this.page.url = 'http://silksong.me/2017/07/17/Beginning-iOS-Animations/';
+        this.page.identifier = '2017/07/17/Beginning-iOS-Animations/';
         this.page.title = 'Beginning iOS Animations';
     };
     (function() {
